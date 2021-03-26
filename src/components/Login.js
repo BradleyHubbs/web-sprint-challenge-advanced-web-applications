@@ -1,19 +1,67 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useHistory } from 'react-router-dom';
+
+const initialValues = {
+  username: '',
+  password: ''
+};
 
 const Login = () => {
   // make a post request to retrieve a token from the api
   // when you have handled the token, navigate to the BubblePage route
+  // make a post request to retrieve a token from the api
+  // when you have handled the token, navigate to the BubblePage route
 
-  useEffect(()=>{
-    // make a post request to retrieve a token from the api
-    // when you have handled the token, navigate to the BubblePage route
-  });
+  const [user, setUser] = useState(initialValues);
+
+  const history = useHistory();
+
+  const handleChanges = (e) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const loginPressed = (e) => {
+    e.preventDefault();
+    axios
+      .post('http://localhost:5000/api/login', user)
+      .then((res) => {
+        localStorage.setItem('token', JSON.stringify(res.data.payload))
+        history.push('./bubble')
+      })
+      .catch((err) => {
+        console.log('Username or Password not valid.');
+      })
+  }
+
+
+
+  useEffect(()=>{ });
+
+
   return (
     <>
       <h1>
         Welcome to the Bubble App!
-        <p>Build a login page here</p>
+        <form onSubmit={loginPressed}>
+          <input
+            type='text'
+            name='username'
+            value = {user.username}
+            onChange={handleChanges}
+            placeholder='UserName'
+          />
+          <input 
+            type='text'
+            name='password'
+            value={user.password}
+            onChange={handleChanges}
+          />
+          <button>Log In</button>
+        </form>
       </h1>
     </>
   );
@@ -27,3 +75,10 @@ export default Login;
 //3. MAKE SURE THAT FORM INPUTS INCLUDE THE LABEL TEXT "username" and "password" RESPECTIVELY.
 //4. If either the username or password is not displaied display EXACTLY the following words: Username or Password not valid.
 //5. If the username / password is equal to Lambda School / i<3Lambd4, save that token to localStorage.
+
+/*
+
+Lambda School
+i<3Lambd4
+
+*/
